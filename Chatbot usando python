@@ -1,7 +1,6 @@
 # Etapa 1: instalar o ChatterBot e o TensorFlow #
 DESCRIPTION:
-
-                                    
+                                  
 This corpus contains a large metadata-rich collection of fictional conversations extracted from raw movie scripts:
 
 - 220,579 conversational exchanges between 10,292 pairs of movie characters
