@@ -1,0 +1,122 @@
+# Etapa 1: instalar o ChatterBot e o TensorFlow #
+DESCRIPTION:
+
+                                    
+This corpus contains a large metadata-rich collection of fictional conversations extracted from raw movie scripts:
+
+- 220,579 conversational exchanges between 10,292 pairs of movie characters
+
+- involves 9,035 characters from 617 movies
+
+- in total 304,713 utterances
+
+- movie metadata included:
+
+    - genres
+
+    - release year
+
+    - IMDB rating
+
+    - number of IMDB votes
+
+    - IMDB rating
+
+- character metadata included:
+
+    - gender (for 3,774 characters)
+
+    - position on movie credits (3,321 characters)
+
+- see the documentation for details
+
+
+BibTeX ENTRY:
+
+                                    
+@InProceedings{Danescu-Niculescu-Mizil+Lee:11a,
+
+  author={Cristian Danescu-Niculescu-Mizil and Lillian Lee},
+
+  title={Chameleons in imagined conversations:
+
+  A new approach to understanding coordination of linguistic style in dialogs.},
+
+  booktitle={Proceedings of the
+
+        Workshop on Cognitive Modeling and Computational Linguistics, ACL 2011},
+
+  year={2011}
+
+}
+# Etapa 2: importar as bibliotecas e carregar os dados #
+
+import chatterbot 
+import tensorflow as tf 
+import numpy as np 
+import json 
+
+# Carrega o dataset 
+com  open ( 'movie_lines.txt' , 'r' ) as file: 
+    data = file.readlines() 
+
+# Pré-processa os dados
+ text = [] 
+for line in dados: 
+    text.append(line.strip().split( ' +++$+++ ' )[- 1 ])
+
+# Etapa 3: criar o modelo #
+
+# Crie um tokenizador para pré-processar os dados de texto
+ tokenizer = tf.keras.preprocessing.text.Tokenizer(num_words= 10000 ) 
+tokenizer.fit_on_texts(text) 
+
+# Converta os dados de texto em sequências sequences
+ = tokenizer.texts_to_sequences(text) 
+
+# Preencha as sequências para torná-los todos do mesmo comprimento
+ padded_sequences = tf.keras.preprocessing.sequence.pad_sequences(sequences, padding= 'post' ) 
+
+# Divida os dados em conjuntos de treinamento e teste
+ train_data = padded_sequences[: 30000 ] 
+test_data = padded_sequences[ 30000 :] 
+
+# Crie o modelo
+ model = tf.keras.Sequential() 
+model.add(tf.keras.layers.Embedding( 10000, 64 , input_length=padded_sequences.shape[ 1 ])) 
+model.add(tf.keras.layers.Bidirectional(tf.keras.layers.LSTM( 64 ))) 
+model.add(tf.keras.layers.Dense( 64 , activation= 'relu' )) 
+model.add(tf.keras.layers.Dense( 10000 , activation= 'softmax' )) 
+
+# Compilar o modelo
+ model. compile (loss= 'categorical_crossentropy' , Optimizer= 'adam' ,metrics=[ 'accuracy' ])
+
+ # Etapa 4: treinar o modelo #
+
+ # Treine o modelo
+ model.fit(train_data, train_data, epochs= 10 , batch_size= 64 ) 
+
+# Avalie o modelo
+ test_loss, test_accuracy = model.evaluate(test_data, test_data) 
+print ( 'Test Loss: {}' . format (test_loss) ) 
+print ( 'Test Accuracy: {}' . format (test_accuracy))
+
+# Etapa 5: usar o modelo para gerar respostas #
+
+# Função para codificar o texto de entrada 
+def  encode_text ( text, tokenizer ): 
+    sequences = tokenizer.texts_to_sequences([text]) 
+    padded_sequences = tf.keras.preprocessing.sequence.pad_sequences(sequences, padding= 'post' ) 
+    return padded_sequences 
+
+# Função para gerar uma resposta do modelo 
+def  generate_response ( model, text, tokenizer ): 
+    encoded_text = encode_text(text, tokenizer) 
+    predição = model.predict(encoded_text) 
+    resposta = tokenizer.sequences_to_texts(prediction.argmax(axis=- 1 ))[ 0 ] 
+    voltarresponse 
+
+# Exemplo de uso
+ input_text = "Olá, como vai você hoje?" 
+response = generate_response(model, input_text, tokenizer) 
+print ( 'Response: {}' . format (response))
